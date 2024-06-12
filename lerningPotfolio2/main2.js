@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import TWEEN from '@tweenjs/tween.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -23,16 +22,6 @@ const cameraPath = [
     { position: new THREE.Vector3(0, 5, -4), rotation: new THREE.Euler(-Math.PI/12, 0, 0) },    
     { position: new THREE.Vector3(5, 5, -5), rotation: new THREE.Euler(-Math.PI/2, 0, 0) },
 ];
-
-
-// // Orbit controls
-// const controls = new OrbitControls(camera, renderer.domElement);
-// controls.enableZoom = false;
-// controls.minPolarAngle = -Math.PI / 2; // Horizontal rotation
-// controls.maxPolarAngle = -Math.PI / 2; // Horizontal rotation
-// controls.enableDamping = true;
-// controls.dampingFactor = 0.1;
-// controls.enabled = false; // Initially disabled
 
 // Set initial camera position and rotation
 camera.position.copy(cameraPath[0].position);
@@ -107,9 +96,6 @@ function moveToNextPosition() {
     // currentPointIndex = (currentPointIndex + 1) % cameraPath.length;
     const nextPoint = cameraPath[currentPointIndex];
 
-    // Enable or disable orbit controls based on the current index
-    // controls.enabled = (currentPointIndex === 0);
-
     // Animate the camera movement
     new TWEEN.Tween(camera.position)
         .to({ x: nextPoint.position.x, y: nextPoint.position.y, z: nextPoint.position.z }, 1000)
@@ -130,17 +116,6 @@ function moveToNextPosition() {
         })
         .start();
 }
-
-// // Custom controls update to fix camera tilt and height
-// controls.addEventListener('change', () => {
-//     if (controls.enabled) {
-//         // Maintain a constant height
-//         camera.position.y = 5;
-
-//         // Apply a fixed tilt
-//         camera.rotation.x = 0;
-//     }
-// });
 
 // Start the TWEEN animation loop
 function animate() {

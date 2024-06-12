@@ -24,15 +24,14 @@ const cameraPath = [
     { position: new THREE.Vector3(5, 5, -5), rotation: new THREE.Euler(-Math.PI/2, 0, 0) },
 ];
 
-
-// // Orbit controls
-// const controls = new OrbitControls(camera, renderer.domElement);
-// controls.enableZoom = false;
-// controls.minPolarAngle = -Math.PI / 2; // Horizontal rotation
-// controls.maxPolarAngle = -Math.PI / 2; // Horizontal rotation
-// controls.enableDamping = true;
-// controls.dampingFactor = 0.1;
-// controls.enabled = false; // Initially disabled
+// Orbit controls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false;
+controls.minPolarAngle = Math.PI / 2; // Horizontal rotation
+controls.maxPolarAngle = Math.PI / 2; // Horizontal rotation
+controls.enableDamping = true;
+controls.dampingFactor = 0.1;
+controls.enabled = false; // Initially disabled
 
 // Set initial camera position and rotation
 camera.position.copy(cameraPath[0].position);
@@ -76,23 +75,24 @@ let currentPointIndex = 0;
 let isTransitioning = false; // Flag to prevent multiple transitions
 let isScrolling = false; // Flag to track if user is currently scrolling
 let transitionTimeout; // Timeout for delaying next transition
+let direction = 1; // 1 for forward, -1 for backward
 
 window.addEventListener('keydown', (event) => {
-    if (event.key === 'a') {
+    if (event.key === 'a' && !isTransitioning) {
         moveToNextPosition();
     }
 });
 
-// Add the event listener for the wheel event with appropriate options
 window.addEventListener('wheel', (event) => {
     if (isTransitioning || isScrolling) return; // Ignore scroll events if transitioning or already scrolling
 
-    isScrolling = true; // Set scrolling flag
-    if (event.deltaY > 0) {
-        currentPointIndex = (currentPointIndex + 1) % cameraPath.length;
-    } else {
-        currentPointIndex = (currentPointIndex - 1 + cameraPath.length) % cameraPath.length;
+    if (event.deltaY < 0) {
+        direction = 1; // Set direction to forward
+    } else if (event.deltaY > 0) {
+        direction = -1; // Set direction to backward
     }
+
+    isScrolling = true; // Set scrolling flag
     moveToNextPosition();
 
     // Set timeout to reset scrolling flag after delay
@@ -104,11 +104,11 @@ window.addEventListener('wheel', (event) => {
 
 function moveToNextPosition() {
     isTransitioning = true; // Set transitioning flag
-    // currentPointIndex = (currentPointIndex + 1) % cameraPath.length;
+    currentPointIndex = (currentPointIndex + direction + cameraPath.length) % cameraPath.length;
     const nextPoint = cameraPath[currentPointIndex];
 
     // Enable or disable orbit controls based on the current index
-    // controls.enabled = (currentPointIndex === 0);
+    controls.enabled = (currentPointIndex === 0);
 
     // Animate the camera movement
     new TWEEN.Tween(camera.position)
@@ -131,21 +131,11 @@ function moveToNextPosition() {
         .start();
 }
 
-// // Custom controls update to fix camera tilt and height
-// controls.addEventListener('change', () => {
-//     if (controls.enabled) {
-//         // Maintain a constant height
-//         camera.position.y = 5;
-
-//         // Apply a fixed tilt
-//         camera.rotation.x = 0;
-//     }
-// });
-
 // Start the TWEEN animation loop
 function animate() {
     requestAnimationFrame(animate);
     TWEEN.update();
+    controls.update();
     renderer.render(scene, camera);
 }
 animate();
