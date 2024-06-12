@@ -1,0 +1,10 @@
+p {
+    color: blue;
+}
+div {
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: underline;
+    border: 1px solid black;
+    padding: 10px;
+}
