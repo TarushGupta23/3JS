@@ -12,7 +12,7 @@ const a120 = 2*Math.PI/3;
 // Scene setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -60,8 +60,14 @@ loader.load(
     (gltf) => {
         laptop = gltf.scene;
         laptop.position.set(-1, 0, 0); // Adjust position as needed
+
+        // ----- added while testing
+        // const light = new THREE.PointLight('white', 10)
+        // scene.add(light)
+
         const s = 100
         laptop.scale.set(s, s, s);
+        console.log(laptop)
         scene.add(laptop);
     },
     undefined,
